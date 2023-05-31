@@ -16,23 +16,28 @@ public class User
 // View: Responsible for presenting the data to the user and capturing user input
 public class UserView
 {
+    private IConsole _console;
+    public UserView(IConsole console)
+    {
+        _console = console;
+    }
     public void DisplayUserDetails(string name, int age)
     {
-        Console.WriteLine($"Name: {name}");
-        Console.WriteLine($"Age: {age}");
+        _console.WriteLine($"Name: {name}");
+        _console.WriteLine($"Age: {age}");
     }
 
     public User GetUserInput()
     {
-        Console.WriteLine("Enter name:");
-        string? name = Console.ReadLine();
+        _console.WriteLine("Enter name:");
+        string? name = _console.ReadLine();
         if (name == null)
         {
             throw new Exception("No name provided");
         }
 
-        Console.WriteLine("Enter age:");
-        string? ageStr = Console.ReadLine();
+        _console.WriteLine("Enter age:");
+        string? ageStr = _console.ReadLine();
         if (ageStr == null)
         {
             throw new Exception("No age provided");
@@ -78,7 +83,7 @@ public class Program
     {
         // Create Model, View, and Controller
         User model = new User("John Doe", 30);
-        UserView view = new UserView();
+        UserView view = new UserView(new ConsoleWrapper());
         UserController controller = new UserController(model, view);
 
         // Initial view
@@ -92,5 +97,24 @@ public class Program
         controller.UpdateView();
 
         Console.ReadLine();
+    }
+}
+
+public interface IConsole
+{
+    string? ReadLine();
+    void WriteLine(string value);
+}
+
+public class ConsoleWrapper : IConsole
+{
+    public string? ReadLine()
+    {
+        return Console.ReadLine();
+    }
+
+    public void WriteLine(string value)
+    {
+        Console.WriteLine(value);
     }
 }
